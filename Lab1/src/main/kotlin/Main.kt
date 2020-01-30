@@ -11,7 +11,7 @@ class Main {
                 Point(5.5, 1.0)
             )
             val polygon = Polygon(points)
-            val point = Point(4.0, 2.0)
+            val point = Point(5.0, 4.0)
             println(polygon.contains(point))
         }
     }
