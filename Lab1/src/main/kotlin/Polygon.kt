@@ -1,88 +1,53 @@
-import org.knowm.xchart.SwingWrapper
-import org.knowm.xchart.XYChartBuilder
-import javax.swing.SwingUtilities.invokeLater
 import java.util.*
 import kotlin.math.atan2
 
 class Polygon(private var points: Array<Point>) {
-    companion object Visualizer {
-        private val chart by lazy {
-            XYChartBuilder().width(600).height(400).title("Area Chart").xAxisTitle("X").yAxisTitle("Y").build()
-        }
-
-        private val sw by lazy {
-            val swingWrapper = SwingWrapper(chart)
-            swingWrapper.displayChart()
-            swingWrapper
-        }
-
-        fun drawPolygon(points: Array<Point>, name: String) {
-            val x = List(points.size + 1) { i -> if (i == points.size) points[0].x else points[i].x }
-            val y = List(points.size + 1) { i -> if (i == points.size) points[0].y else points[i].y }
-
-            chart.addSeries(name, x, y)
-            sw.repaintChart()
-        }
-
-        fun drawPoint(point: Point, name: String) {
-            chart.addSeries(name, doubleArrayOf(point.x), doubleArrayOf(point.y))
-            sw.repaintChart()
-        }
-
-        fun drawLine(a: Point, b: Point, name: String) {
-            invokeLater {
-                chart.addSeries(name, doubleArrayOf(a.x, b.x), doubleArrayOf(a.y, b.y))
-                sw.repaintChart()
-            }
-        }
-    }
+    private val visualizer = Visualizer()
 
     init {
-        points.sortBy { -atan2(-it.x, -it.y) }
-        drawPolygon(points, "Polygon")
+        setUpArray()
+        visualizer.drawPolygon(points, "Polygon")
     }
 
-    private var zeroID: Int = 0
-
-    private val zero: Point by lazy {
+    private fun setUpArray() {
+        points.sortBy { -atan2(-it.x, -it.y) }
+        var zeroID = 0
         for (i in points.indices) {
             if (points[i].x < points[zeroID].x || points[i].x == points[zeroID].x && points[i].y < points[zeroID].y)
                 zeroID = i
         }
-        points[zeroID]
-    }
-
-    private val pointsArray: Array<Point> by lazy {
         val list = points.toMutableList()
         Collections.rotate(list, -zeroID)
-        list.removeAt(0)
-        list.toTypedArray()
+        points=list.toTypedArray()
     }
 
-
     fun contains(point: Point): Boolean {
-        drawPoint(point, "Initial point")
-        drawPoint(zero, "Zero point")
-        if (point.x >= zero.x) {
-            return if (rotate(zero, pointsArray[0], point) < 0 || rotate(zero, pointsArray.last(), point) > 0)
+        visualizer.drawPoint(point, "Initial point")
+        visualizer.drawPoint(points[0], "Zero point")
+        if (point.x >= points[0].x) {
+            return if (rotate(points[0], points[1], point) < 0 || rotate(points[0], points.last(), point) > 0)
                 false
             else {
-                var l = 0
-                var r = pointsArray.size - 1
+                var l = 1
+                var r = points.size - 1
                 var mid: Int
                 while (r - l > 1) {
                     mid = l + (r - l) / 2
-                    if (rotate(zero, pointsArray[mid], point) < 0)
+                    if (rotate(points[0], points[mid], point) < 0)
                         r = mid
                     else
                         l = mid
                 }
 
                 Thread.sleep(500)
-                drawLine(zero, pointsArray[l], "Line $zero - ${pointsArray[l]}")
+                visualizer.drawLine(points[0], points[l], "Line ${points[0]} - ${points[l]}")
                 Thread.sleep(500)
-                drawLine(zero, pointsArray[r], "Line $zero - ${pointsArray[r]}")
-                !intersect(zero, point, points[l], points[r])
+                visualizer.drawLine(points[0], points[r], "Line ${points[0]} - ${points[r]}")
+                Thread.sleep(500)
+                visualizer.drawLine(points[l], points[r], "Line ${points[l]} - ${points[r]}")
+                Thread.sleep(500)
+                visualizer.drawLine(points[0], point, "Line zero - point")
+                !intersect(points[0], point, points[l], points[r])
             }
         }
         return false
