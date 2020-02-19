@@ -2,7 +2,7 @@ import java.io.File
 
 class Loader(private val vertexFileName: String, private val edgeFileName: String) {
     private lateinit var vertex: MutableList<GraphNode>
-    private var graph=Graph()
+    private var graph = Graph()
 
     fun readGraph(): Graph {
         readVertex()
@@ -15,7 +15,7 @@ class Loader(private val vertexFileName: String, private val edgeFileName: Strin
         File(vertexFileName).forEachLine {
             val str = it.split(" ")
             val node = GraphNode(str[0].toDouble(), str[1].toDouble())
-            vertex.add(node)
+            vertex.add(node);
             graph.addNode(node)
         }
     }

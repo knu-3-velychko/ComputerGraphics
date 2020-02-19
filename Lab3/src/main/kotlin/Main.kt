@@ -4,6 +4,8 @@ class Main {
         fun main(args: Array<String>) {
             val graph = Loader("vertex.txt", "edges.txt").readGraph()
             GraphView(graph).draw()
+            val slabDecomposition = SlabDecomposition(graph, Pair(3.0, 3.0))
+            slabDecomposition.polygon
         }
     }
 }
