@@ -3,9 +3,13 @@ class Main {
         @JvmStatic
         fun main(args: Array<String>) {
             val graph = Loader("vertex.txt", "edges.txt").readGraph()
-            GraphView(graph).draw()
-            val slabDecomposition = SlabDecomposition(graph, Pair(3.0, 3.0))
-            slabDecomposition.polygon
+            val graphView = GraphView(graph)
+            val point = Pair(3.0, 3.0)
+            graphView.drawGraph()
+            graphView.drawPoint(point)
+            val slabDecomposition = SlabDecomposition(graph, point)
+            println(slabDecomposition.edge)
+            graphView.drawPolygon(slabDecomposition.edge)
         }
     }
 }

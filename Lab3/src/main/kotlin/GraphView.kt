@@ -3,8 +3,10 @@ import org.knowm.xchart.XYChartBuilder
 import java.awt.Color
 
 class GraphView(private val graph: Graph) {
-    fun draw() {
-        val chart = XYChartBuilder().width(600).height(400).xAxisTitle("X").yAxisTitle("Y").build()
+    val chart = XYChartBuilder().width(600).height(400).xAxisTitle("X").yAxisTitle("Y").build()
+    val swingWrapper = SwingWrapper(chart)
+
+    fun drawGraph() {
         graph.getEdges().forEach {
             chart.addSeries(
                 "${it.first}  ${it.second}",
@@ -12,9 +14,25 @@ class GraphView(private val graph: Graph) {
                 doubleArrayOf(it.first.y, it.second.y)
             ).setMarkerColor(Color.black).setLineColor(Color.black)
         }
-        val swingWrapper = SwingWrapper(chart)
         swingWrapper.displayChart()
+        swingWrapper.repaintChart()
+    }
 
+    fun drawPoint(point: Pair<Double, Double>) {
+        chart.addSeries(
+            "Point: ${point.first}  ${point.second}",
+            doubleArrayOf(point.first),
+            doubleArrayOf(point.second)
+        ).setMarkerColor(Color.RED).setLineColor(Color.RED)
+        swingWrapper.repaintChart()
+    }
+
+    fun drawPolygon(edge: SlabDecomposition.Edge) {
+        chart.addSeries(
+            "Edge: ${edge.first}  ${edge.second}",
+            doubleArrayOf(edge.first.x, edge.second.x),
+            doubleArrayOf(edge.first.y, edge.second.y)
+        ).setMarkerColor(Color.RED).setLineColor(Color.RED)
         swingWrapper.repaintChart()
     }
 }
