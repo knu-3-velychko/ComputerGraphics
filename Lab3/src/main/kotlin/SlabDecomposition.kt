@@ -10,6 +10,8 @@ class SlabDecomposition(private val graph: Graph, private val point: Pair<Double
         }
     }
 
+    private var isOutOfGraph = false
+
     data class Stripe(
         val node: GraphNode,
         val edges: TreeSet<Edge> = TreeSet()
@@ -30,11 +32,29 @@ class SlabDecomposition(private val graph: Graph, private val point: Pair<Double
             }
             stripes.add(Stripe(i, edges.clone() as TreeSet<Edge>))
         }
-        findStripes(point, stripes)
+
+        when {
+            point.second < stripes[0].node.y -> {
+                println("Point is out of graph on bottom")
+                isOutOfGraph = true
+                Pair(stripes[0], null)
+            }
+            point.second > stripes.last().node.y -> {
+                println("Point is out of graph on top")
+                isOutOfGraph = true
+                Pair(stripes.last(), null)
+            }
+            else -> {
+                findStripes(point, stripes)
+            }
+        }
     }
 
     val edges by lazy {
-        findEdges(point, stripes.first.edges.toList())
+        if (isOutOfGraph)
+            null
+        else
+            findEdges(point, stripes.first.edges.toList())
     }
 
     //binary search in stripes
@@ -65,6 +85,15 @@ class SlabDecomposition(private val graph: Graph, private val point: Pair<Double
         var mid: Int
         var rotation: Double
 
+        if (rotate(edges[0].first, edges[0].second, point) < 0) {
+            println("Point is out of graph on right")
+            return Pair(edges[0], null)
+        }
+        if (rotate(edges.last().first, edges.last().second, point) > 0) {
+            println("Point is out of graph on left")
+            return Pair(edges.last(), null)
+        }
+
         while (right - left > 1) {
             mid = (left + right) / 2
             rotation = rotate(edges[mid].first, edges[mid].second, point)
@@ -90,4 +119,5 @@ class SlabDecomposition(private val graph: Graph, private val point: Pair<Double
         (b.x - a.x) * (c.second - b.y) - (b.y - a.y) * (c.first - b.x)
 
     private fun isPoint(point: Pair<Double, Double>, node: GraphNode) = point.first == node.x && point.second == node.y
+
 }
