@@ -10,12 +10,12 @@ class SlabDecomposition(private val graph: Graph, private val point: Pair<Double
         }
     }
 
-    private data class Stripe(
+    data class Stripe(
         val node: GraphNode,
         val edges: TreeSet<Edge> = TreeSet()
     )
 
-    val edge by lazy {
+    val stripes by lazy {
         val nodes = graph.getNodes().sortedWith(compareBy({ it.y }, { it.x }))
         val stripes = mutableListOf<Stripe>()
         val edges: TreeSet<Edge> = TreeSet()
@@ -28,17 +28,17 @@ class SlabDecomposition(private val graph: Graph, private val point: Pair<Double
                     edges.remove(Edge(j, i))
                 }
             }
-            println(edges)
             stripes.add(Stripe(i, edges.clone() as TreeSet<Edge>))
         }
+        findStripes(point, stripes)
+    }
 
-        val stripe = findStripe(point, stripes)
-        println(stripe)
-        findEdge(point, stripe.edges.toList())
+    val edges by lazy {
+        findEdges(point, stripes.first.edges.toList())
     }
 
     //binary search in stripes
-    private fun findStripe(point: Pair<Double, Double>, stripes: List<Stripe>): Stripe {
+    private fun findStripes(point: Pair<Double, Double>, stripes: List<Stripe>): Pair<Stripe, Stripe> {
         var left = 0
         var right = stripes.size - 1
         var mid: Int
@@ -52,32 +52,42 @@ class SlabDecomposition(private val graph: Graph, private val point: Pair<Double
             }
         }
 
-        return stripes[left]
+        return Pair(stripes[left], stripes[right])
     }
 
 
-    private fun findEdge(
+    private fun findEdges(
         point: Pair<Double, Double>,
         edges: List<Edge>
-    ): Edge {
+    ): Pair<Edge, Edge?> {
         var left = 0
         var right = edges.size - 1
-        var mid = 0
-
-        println("Edges")
-        println(edges)
+        var mid: Int
+        var rotation: Double
 
         while (right - left > 1) {
             mid = (left + right) / 2
-            if (rotate(edges[mid].first, edges[mid].second, point) < 0)
+            rotation = rotate(edges[mid].first, edges[mid].second, point)
+            if (rotation < 0)
                 right = mid
-            else
+            else if (rotation > 0)
                 left = mid
+            else {
+                println("Point is on edge")
+                if (isPoint(point, edges[mid].first))
+                    println("Point coincides with vertex ${edges[mid].first} of the edge ${edges[mid]}")
+                else if (isPoint(point, edges[mid].second)) {
+                    println("Point coincides with vertex ${edges[mid].second} of the edge ${edges[mid]}")
+                }
+                return Pair(edges[mid], null)
+            }
         }
 
-        return edges[left]
+        return Pair(edges[left], edges[right])
     }
 
     private fun rotate(a: GraphNode, b: GraphNode, c: Pair<Double, Double>) =
         (b.x - a.x) * (c.second - b.y) - (b.y - a.y) * (c.first - b.x)
+
+    private fun isPoint(point: Pair<Double, Double>, node: GraphNode) = point.first == node.x && point.second == node.y
 }

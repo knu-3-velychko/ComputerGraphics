@@ -27,12 +27,30 @@ class GraphView(private val graph: Graph) {
         swingWrapper.repaintChart()
     }
 
-    fun drawPolygon(edge: SlabDecomposition.Edge) {
+    fun drawEdge(edge: SlabDecomposition.Edge) {
         chart.addSeries(
             "Edge: ${edge.first}  ${edge.second}",
             doubleArrayOf(edge.first.x, edge.second.x),
             doubleArrayOf(edge.first.y, edge.second.y)
+        ).setMarkerColor(Color.GREEN).setLineColor(Color.GREEN)
+        swingWrapper.repaintChart()
+    }
+
+    fun drawStripe(minX: Double, maxX: Double, stripe: SlabDecomposition.Stripe) {
+        chart.addSeries(
+            "Stipe line: $stripe", doubleArrayOf(minX, maxX),
+            doubleArrayOf(stripe.node.y, stripe.node.y)
         ).setMarkerColor(Color.RED).setLineColor(Color.RED)
+        swingWrapper.repaintChart()
+    }
+
+    fun drawStripeEdges(stripe: SlabDecomposition.Stripe) {
+        stripe.edges.forEach {
+            chart.addSeries(
+                "Stipe edges: $stripe $it", doubleArrayOf(it.first.x, it.second.x),
+                doubleArrayOf(it.first.y, it.second.y)
+            ).setMarkerColor(Color.MAGENTA).setLineColor(Color.MAGENTA)
+        }
         swingWrapper.repaintChart()
     }
 }
