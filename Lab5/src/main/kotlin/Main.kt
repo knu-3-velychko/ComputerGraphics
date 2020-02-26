@@ -5,7 +5,7 @@ class Main {
             val points = Loader("vertex.txt").readPoints()
             val hullView = HullView()
             hullView.drawPoints(points)
-            hullView.drawHull(QuickHull(points).hull.toMutableList())
+            QuickHull(points).hull?.toMutableList()?.let { hullView.drawHull(it) }
         }
     }
 }

@@ -24,7 +24,15 @@ class HullView {
     }
 
     fun drawHull(points: MutableList<Point>) {
-        points.sortBy { -atan2(-it.x, -it.y) }
+        val center = Point(0.0, 0.0)
+        points.forEach {
+            center.x += it.x / points.size
+            center.y += it.y / points.size
+        }
+
+        points.map { it.angle = Math.atan2(it.y - center.y, it.x - center.x) * 180 / Math.PI }
+
+        points.sortBy { it.angle }
 
         val x = mutableListOf<Double>()
         val y = mutableListOf<Double>()
@@ -33,6 +41,8 @@ class HullView {
             x.add(it.x)
             y.add(it.y)
         }
+        x.add(points[0].x)
+        y.add(points[0].y)
 
         chart.addSeries(
             "Hull $points", x, y
