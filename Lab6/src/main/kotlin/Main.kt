@@ -5,6 +5,7 @@ class Main {
             val points = Loader("vertex.txt").readPoints()
             val hullView = HullView()
             hullView.drawPoints(points)
+            hullView.drawHull(JarvisMethod(points.toMutableList()).hull)
         }
     }
 }
