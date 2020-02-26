@@ -1,33 +1,24 @@
-import kotlin.math.atan2
-
 class JarvisMethod(private val points: MutableList<Point>) {
     val hull by lazy {
         if (points.size <= 3)
             points
         else {
-
-            println(cos(Point(7.0, 4.8), Point(3.5, 6.5), Point(2.0, 5.0)))
-            println(cos(Point(7.0, 4.8), Point(3.5, 6.5), Point(1.0, 3.0)))
-
             val result = mutableListOf<Point>()
 
-            val start = getLeftPoint()
-            result.add(start)
+            val left = getLeftPoint()
+            result.add(left)
+            points.remove(left)
+            points.add(left)
 
-            var index = findFirst(start)
-            var point1 = start
-            var point2 = points[index]
+            var index = findNext(left)
+            var point = points[index]
             points.removeAt(index)
 
-            println(point2)
 
-            result.add(point1)
-
-            while (point2 != start) {
-                result.add(point2)
-                index = findNext(point1, point2)
-                point1 = point2
-                point2 = points[index]
+            while (point != left) {
+                result.add(point)
+                index = findNext(point)
+                point = points[index]
                 points.removeAt(index)
             }
 
@@ -36,22 +27,22 @@ class JarvisMethod(private val points: MutableList<Point>) {
     }
 
     private fun getLeftPoint(): Point {
-        var point = points[0]
+        var left = points[0]
 
         for (i in points) {
-            if (i.x < point.x || (i.x == point.x && i.y < point.y)) {
-                point = i
+            if (i.x < left.x || (i.x == left.x && i.y < left.y)) {
+                left = i
             }
         }
 
-        return point
+        return left
     }
 
-    private fun findFirst(point: Point): Int {
+    private fun findNext(point: Point): Int {
         var next = points[0]
         var index = 0
         for (i in points.indices) {
-            if (atan2(points[i].y - point.y, points[i].x - point.x) > atan2(next.y - point.y, next.x - point.x)) {
+            if (getSide(points[i], next, point) == -1) {
                 next = points[i]
                 index = i
             }
@@ -59,20 +50,15 @@ class JarvisMethod(private val points: MutableList<Point>) {
         return index
     }
 
-    private fun findNext(point1: Point, point2: Point): Int {
-        var next = points[0]
-        var index = 0
-        for (i in points.indices) {
-            if ((cos(point1, point2, points[i])) > cos(point1, point2, next) || (cos(point1, point2, points[i]) == cos(
-                    point1,
-                    point2,
-                    next
-                ) && points[i].x > next.x)
-            ) {
-                next = points[i]
-                index = i
-            }
-        }
-        return index
+    private fun getSide(a: Point, b: Point, c: Point): Int {
+        val rotation = getRotation(a, b, c)
+
+        if (rotation > 0)
+            return 1
+        if (rotation < 0)
+            return -1
+        return 0
     }
+
+    private fun getRotation(a: Point, b: Point, c: Point) = (c.y - a.y) * (b.x - a.x) - (b.y - a.y) * (c.x - a.x)
 }
