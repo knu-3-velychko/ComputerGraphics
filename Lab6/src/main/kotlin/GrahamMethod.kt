@@ -1,43 +1,30 @@
 //Graham Algorithm for sorted points set
-class GrahamMethod(private val points: List<Point>) {
+class GrahamMethod(private val points: MutableList<Point>) {
     val hull by lazy {
         if (points.size <= 3) {
-            points
+            points.toList()
         } else {
-            val p = points.toMutableList()
-            var lowest = getLowest()
-            val result = mutableListOf(lowest)
-            p.remove(lowest)
-            p.add(lowest)
-            while (true) {
-                var j = 0
-                var next = p[j]
-                j++
+            val start = getLowest()
+            val ind = points.indexOf(start)
+            points[ind] = points[0]
+            points[0] = start
 
-                if (next == lowest) {
-                    if (p.size == 1)
-                        break
-                    else {
-                        next = p[j]
-                        j++
-                    }
-                }
+            points.map { it.angle = Math.atan2(it.y - start.y, it.x - start.x) * 180 / Math.PI }
 
-                for (i in j until p.size) {
-                    val current = p[i]
-                    if (getSide(lowest, next, current) > 1) {
-                        next = current
-                    } else {
-                        p.remove(p[i])
-                    }
+            points.sortBy { it.angle }
+
+            val hull = mutableListOf<Point>()
+            hull.add(points[0])
+            hull.add(points[1])
+            hull.add(points[2])
+
+            for (i in 3 until points.size) {
+                while (hull.size >= 2 && getSide(points[i], hull[hull.size - 2], hull[hull.size - 1]) <= 0) {
+                    hull.remove(hull.last())
                 }
-                if (next == result[0])
-                    break
-                result.add(next)
-                p.remove(next)
-                lowest = next
+                hull.add(points[i])
             }
-            result
+            hull
         }
     }
 
