@@ -6,7 +6,7 @@ class Main {
             val points=PointGenerator().generatePoints(100)
             val hullView = HullView()
             hullView.drawPoints(points)
-            hullView.drawHull(JarvisMethod(points.toMutableList()).hull)
+            hullView.drawHull(DevideAndConquer(points.toMutableList(),5).hull.toMutableList())
         }
     }
 }
