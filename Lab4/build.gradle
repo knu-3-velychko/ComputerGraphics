@@ -13,6 +13,7 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation "org.graphstream:gs-ui:1.3"
+    implementation "org.knowm.xchart:xchart:3.6.0"
 }
 
 compileKotlin {
