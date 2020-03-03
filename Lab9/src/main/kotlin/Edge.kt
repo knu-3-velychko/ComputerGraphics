@@ -1,3 +1,3 @@
-class Edge(val from: Point, to: Point) {
+class Edge(var from: Point, var to: Point) {
     //TODO:
 }
