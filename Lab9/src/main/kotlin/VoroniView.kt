@@ -4,7 +4,7 @@ import org.knowm.xchart.XYChartBuilder
 import org.knowm.xchart.style.markers.SeriesMarkers
 import java.awt.Color
 
-class VoroniView{
+class VoroniView {
     private val chart: XYChart = XYChartBuilder().width(600).height(400).xAxisTitle("X").yAxisTitle("Y").build()
     private val swingWrapper = SwingWrapper(chart)
 
@@ -22,5 +22,16 @@ class VoroniView{
         swingWrapper.repaintChart()
     }
 
-    //TODO: draw Voroni diagram
+    fun drawEdges(edges: List<Edge>) {
+        edges.forEach {
+            chart.addSeries(
+                "Edge $it",
+                doubleArrayOf(it.from.x, it.to.x),
+                doubleArrayOf(it.from.y, it.to.y)
+            ).setMarkerColor(Color.BLACK).setMarker(SeriesMarkers.CIRCLE).setLineColor(Color.BLACK)
+        }
+
+        swingWrapper.displayChart()
+        swingWrapper.repaintChart()
+    }
 }

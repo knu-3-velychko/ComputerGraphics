@@ -4,4 +4,4 @@ abstract class Event(val point: Point) : Comparable<Event> {
 
 class PointEvent(point: Point) : Event(point)
 
-class CircleEvent(point: Point, val vert: Point) : Event(point)
+class CircleEvent(val arc: Arc, point: Point, val vert: Point) : Event(point)
