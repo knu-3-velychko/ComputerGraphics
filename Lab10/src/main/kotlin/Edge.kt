@@ -1,0 +1,1 @@
+data class Edge(val start: Point, val end: Point)
