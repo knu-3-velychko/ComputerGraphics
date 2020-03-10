@@ -3,7 +3,21 @@ class Main {
         @JvmStatic
         fun main(args: Array<String>) {
             val graph = Loader("vertex.txt", "edges.txt").readGraph()
-            GraphView(graph).draw()
+            val graphView = GraphView()
+            graphView.drawGraph(graph)
+
+            val chainsMethod = ChainsMethod(graph)
+
+            for (i in chainsMethod.chains) {
+                println("Chain: ")
+                for (j in i) {
+                    println(j)
+                }
+                println()
+            }
+
+            graphView.drawChains(chainsMethod.chains)
+            println("finished")
         }
     }
 }

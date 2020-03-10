@@ -1,4 +1,6 @@
-public class GraphNode(val x: Double, val y: Double, private val edges: MutableList<GraphNode> = mutableListOf()) {
+class GraphNode(var x: Double, var y: Double, private val edges: MutableList<GraphNode> = mutableListOf()) {
+    var angle = 0.0
+
     fun addEdge(node: GraphNode) {
         if (edges.find { it == node } == null)
             edges.add(node)
@@ -9,4 +11,13 @@ public class GraphNode(val x: Double, val y: Double, private val edges: MutableL
     }
 
     fun getEdges() = edges.toList()
+
+    override fun equals(other: Any?): Boolean {
+        if (other is GraphNode) {
+            if (this.x == other.x && this.y == other.y) {
+                return true
+            }
+        }
+        return false
+    }
 }
