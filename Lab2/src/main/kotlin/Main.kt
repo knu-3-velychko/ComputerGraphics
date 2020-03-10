@@ -3,7 +3,7 @@ class Main {
         @JvmStatic
         fun main(args: Array<String>) {
             val graph = Loader("vertex.txt", "edges.txt").readGraph()
-            val point = GraphNode(4.0, 5.0)
+            val point = GraphNode(10.0, 3.0)
             val graphView = GraphView()
 
             graphView.drawGraph(graph)

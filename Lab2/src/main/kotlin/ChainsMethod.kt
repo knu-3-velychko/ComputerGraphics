@@ -38,7 +38,7 @@ class ChainsMethod(val graph: Graph, val node: GraphNode) {
 
     private fun edgesInOut(edgesIn: Array<MutableList<Int>>, edgesOut: Array<MutableList<Int>>) {
         for (i in graph.edges.indices) {
-            if (graph.edges[i].from.y <= graph.edges[i].to.y) {
+            if (graph.edges[i].from.y < graph.edges[i].to.y || (graph.edges[i].from.y == graph.edges[i].to.y && graph.edges[i].from.x > graph.edges[i].to.x)) {
                 edgesIn[getIndex(graph.edges[i].from)].add(i)
                 edgesOut[getIndex(graph.edges[i].to)].add(i)
             } else {
@@ -170,7 +170,7 @@ class ChainsMethod(val graph: Graph, val node: GraphNode) {
                         graph.edges[edgesId[i]].from,
                         graph.edges[edgesId[i]].to,
                         graph.edges[edgesId[j]].to
-                    ) <= 0
+                    ) < 0
                 ) {
                     val tmp = edgesId[j]
                     edgesId[j] = edgesId[i]
@@ -209,11 +209,11 @@ class ChainsMethod(val graph: Graph, val node: GraphNode) {
 
     private fun searchStripes(point: GraphNode): Pair<List<GraphNode>, List<GraphNode>>? {
         val leftEdge = searchEdge(point, chains[0])
-        var rotation = getRotation(leftEdge.from, leftEdge.to, point)
-        if (rotation > 0) {
+        var side = getSide(leftEdge.from, leftEdge.to, point)
+        if (side < 0) {
             println("Point is out of graph on the left.")
             return null
-        } else if (rotation == 0.0) {
+        } else if (side == 0) {
             if (point == leftEdge.from || point == leftEdge.to) {
                 println("Point is graph's point.")
                 return null
@@ -223,11 +223,11 @@ class ChainsMethod(val graph: Graph, val node: GraphNode) {
         }
 
         val rightEdge = searchEdge(point, chains.last())
-        rotation = getRotation(leftEdge.from, leftEdge.to, point)
-        if (rotation < 0) {
-            println("Point is out of graph on the left.")
+        side = getSide(rightEdge.from, rightEdge.to, point)
+        if (side > 0) {
+            println("Point is out of graph on the right.")
             return null
-        } else if (rotation == 0.0) {
+        } else if (side == 0) {
             if (point == rightEdge.from || point == rightEdge.to) {
                 println("Point is graph's point.")
                 return null
@@ -242,14 +242,15 @@ class ChainsMethod(val graph: Graph, val node: GraphNode) {
         var edge: Edge
 
         while (r - l > 1) {
-            mid = (l + r) / 2
+            mid = l + (r - l) / 2
             edge = searchEdge(point, chains[mid])
-            rotation = getRotation(edge.from, edge.to, point)
-            if (rotation < 0)
+            side = getSide(edge.from, edge.to, point)
+            println("Edge ${leftEdge.from} ${leftEdge.to}.")
+            if (side < 0) {
                 r = mid
-            else if (rotation > 0)
+            } else if (side > 0) {
                 l = mid
-            else {
+            } else {
                 if (point == rightEdge.from || point == rightEdge.to) {
                     println("Point is graph's point.")
                     return null
@@ -269,7 +270,7 @@ class ChainsMethod(val graph: Graph, val node: GraphNode) {
 
         while (r - l > 1) {
             mid = (l + r) / 2
-            if (point.y < chain[mid].y) {
+            if (point.y > chain[mid].y) {
                 r = mid
             } else {
                 l = mid
