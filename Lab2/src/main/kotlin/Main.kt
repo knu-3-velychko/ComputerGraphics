@@ -3,21 +3,31 @@ class Main {
         @JvmStatic
         fun main(args: Array<String>) {
             val graph = Loader("vertex.txt", "edges.txt").readGraph()
+            val point = GraphNode(4.0, 5.0)
             val graphView = GraphView()
-            graphView.drawGraph(graph)
 
-            val chainsMethod = ChainsMethod(graph)
+            graphView.drawGraph(graph)
+            graphView.drawPoint(point)
+
+            val chainsMethod = ChainsMethod(graph, point)
+
+            graphView.drawChains(chainsMethod.chains)
 
             for (i in chainsMethod.chains) {
-                println("Chain: ")
+                println("Chain:")
                 for (j in i) {
-                    println(j)
+                    println("${j.x} ${j.y}")
                 }
                 println()
             }
 
-            graphView.drawChains(chainsMethod.chains)
-            println("finished")
+            val chainsView = GraphView()
+            chainsView.drawGraph(graph)
+            chainsView.drawPoint(point)
+
+            chainsView.drawChain(chainsMethod.chainsBetween.first)
+            chainsView.drawChain(chainsMethod.chainsBetween.second)
+
         }
     }
 }

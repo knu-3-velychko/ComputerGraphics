@@ -20,13 +20,23 @@ class GraphView {
         swingWrapper.repaintChart()
     }
 
+    fun drawPoint(point: GraphNode) {
+        chart.addSeries(
+            "Point: $point",
+            doubleArrayOf(point.x),
+            doubleArrayOf(point.y)
+        ).setMarkerColor(Color.green).setLineColor(Color.green)
+
+        swingWrapper.repaintChart()
+    }
+
     fun drawChains(chains: List<List<GraphNode>>) {
         for (i in chains) {
             drawChain(i)
         }
     }
 
-    private fun drawChain(chain: List<GraphNode>) {
+    fun drawChain(chain: List<GraphNode>) {
         if (chain.isEmpty())
             return
         val x = mutableListOf<Double>()
