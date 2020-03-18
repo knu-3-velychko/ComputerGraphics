@@ -35,15 +35,74 @@ class RegionTree(private var points: List<Point>) {
         return list.toList()
     }
 
-    fun searchPoints(from: Point, to: Point) {
+    fun searchPoints(from: Point, to: Point): List<Point> {
+        val nodes = searchPointsX()
 
+        val result = mutableListOf<Point>()
+
+        for (i in nodes) {
+            result.addAll(searchPointsY(from.y, to.y, i.points))
+        }
+
+        return result
     }
 
-    private fun searchPointsX():List<Node>{
-
-    }
-
-    private fun searchPointsY():List<Point>{
+    private fun searchPointsX(): List<Node> {
         
+    }
+
+    private fun searchPointsY(minY: Double, maxY: Double, list: List<Point>): List<Point> {
+        val right = less(maxY, list)
+        if (right == -1) {
+            return emptyList()
+        }
+        val left = greater(minY, list)
+        if (left == -1) {
+            return emptyList()
+        }
+
+        val result = mutableListOf<Point>()
+
+        for (i in left..right) {
+            result.add(list[i])
+        }
+
+        return result
+    }
+
+    private fun less(y: Double, list: List<Point>): Int {
+        var left = 0
+        var right = list.size - 1
+        var mid: Int
+
+        while (left < right) {
+            mid = left + (right - left) / 2
+
+            if (list[mid].y > y) {
+                right = mid
+            } else {
+                left = mid + 1
+            }
+        }
+
+        return if (list[left].y <= y) left else -1
+    }
+
+    private fun greater(y: Double, list: List<Point>): Int {
+        var left = 0
+        var right = list.size - 1
+        var mid: Int
+
+        while (left < right) {
+            mid = left + (right - left) / 2
+
+            if (list[mid].y < y) {
+                left = mid
+            } else {
+                right = mid - 1
+            }
+        }
+
+        return if (list[right].y >= y) left else -1
     }
 }

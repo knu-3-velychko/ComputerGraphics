@@ -7,5 +7,6 @@ class Main {
             regionView.drawPoints(points)
             regionView.drawRegion(Point(1.0, 3.0) to Point(5.0, 6.0))
         }
+
     }
 }
