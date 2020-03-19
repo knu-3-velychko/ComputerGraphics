@@ -8,7 +8,7 @@ class RegionTree(private var points: List<Point>) {
 
     private fun build(left: Int, right: Int): Node {
         val node = Node()
-        val m = (left + right) / 2
+        val m = left + (right - left) / 2
         node.mid = points[m].x
         if (points.size == right) {
             node.to = Double.POSITIVE_INFINITY
@@ -20,8 +20,10 @@ class RegionTree(private var points: List<Point>) {
 
         node.points = insertPoints(left, right)
 
-        node.left = build(left, m)
-        node.right = build(m, right)
+        if (m - left > 1)
+            node.left = build(left, m)
+        if (right - m > 1)
+            node.right = build(m, right)
 
         return node
     }
@@ -36,7 +38,7 @@ class RegionTree(private var points: List<Point>) {
     }
 
     fun searchPoints(from: Point, to: Point): List<Point> {
-        val nodes = searchPointsX()
+        val nodes = searchPointsX(from, to, root)
 
         val result = mutableListOf<Point>()
 
@@ -47,8 +49,25 @@ class RegionTree(private var points: List<Point>) {
         return result
     }
 
-    private fun searchPointsX(): List<Node> {
-        
+    private fun searchPointsX(from: Point, to: Point, node: Node?): List<Node> {
+        if (node == null || from.x > to.x || to.x < node.from) {
+            return emptyList()
+        }
+        if (from.x <= node.from && to.x >= node.to) {
+            return listOf(node)
+        }
+        if (from.x >= node.mid) {
+            return searchPointsX(from, to, node.right)
+        }
+        if (to.x < node.mid) {
+            return searchPointsX(from, to, node.left)
+        }
+
+        val result = mutableListOf<Node>()
+        result.addAll(searchPointsX(from, to, node.left))
+        result.addAll(searchPointsX(from, to, node.right))
+
+        return result
     }
 
     private fun searchPointsY(minY: Double, maxY: Double, list: List<Point>): List<Point> {
@@ -97,9 +116,9 @@ class RegionTree(private var points: List<Point>) {
             mid = left + (right - left) / 2
 
             if (list[mid].y < y) {
-                left = mid
+                left = mid + 1
             } else {
-                right = mid - 1
+                right = mid
             }
         }
 
