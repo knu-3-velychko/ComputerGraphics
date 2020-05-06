@@ -1,11 +1,24 @@
-class Main {
+import javafx.application.Application
+import javafx.fxml.FXMLLoader
+import javafx.scene.Parent
+import javafx.scene.Scene
+import javafx.stage.Stage
+
+class Main : Application() {
+    @Throws(Exception::class)
+    override fun start(primaryStage: Stage?) {
+        val loader = FXMLLoader()
+        loader.location = javaClass.getResource("mainScene.fxml")
+        val parent: Parent = loader.load()
+        loader.setController(AppController())
+        primaryStage!!.scene = Scene(parent)
+        primaryStage.show()
+    }
+
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            val points = PointGenerator().generatePoints(10)
-            val voroniView = VoroniView()
-            voroniView.drawPoints(points)
-            val fortuneMethod = FortuneMethod(points, Point(0.0, 0.0), Point(11.0, 11.0))
+            launch(Main::class.java)
         }
     }
 }
