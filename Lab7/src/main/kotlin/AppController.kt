@@ -2,7 +2,6 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
-import javafx.scene.control.Button
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import java.net.URL
@@ -20,6 +19,8 @@ class AppController : Initializable {
     private val points: ArrayList<Point> = ArrayList<Point>()
     private var leftNode: CircularListNode<Point?>? = null
     private var rightNode: CircularListNode<Point?>? = null
+
+
     private fun updateHull(hull: CircularList<Point?>, point: Point) {
         var curPoint: CircularListNode<Point?>? = null
         if (hull.size() >= 3) {
@@ -31,7 +32,7 @@ class AppController : Initializable {
             var bottomPoint: CircularListNode<Point?> = startPoint
             var topFound = false
             var bottomFound = false
-            var inside = false
+            var inside: Boolean
             var firstBottomTime = true
             var firstTopTime = true
             var steps = 0
@@ -39,8 +40,7 @@ class AppController : Initializable {
                 steps++
                 var a: Double = sign(Point.area(point, topPoint.data!!, topPoint.next!!.data!!))
                 var b: Double = sign(Point.area(point, topPoint.data!!, topPoint.prev!!.data!!))
-                if (!firstTopTime && topPoint === startPoint || !firstBottomTime && bottomPoint === startPoint) inside =
-                    true
+                inside = (!firstTopTime && topPoint === startPoint || !firstBottomTime && bottomPoint === startPoint)
                 if (!topFound && (a != b || b <= 0)) {
                     topPoint = topPoint.next!!
                     firstTopTime = false
@@ -88,7 +88,6 @@ class AppController : Initializable {
         println("Click: $x $y")
         val point = Point(x, y)
         points.add(point)
-        //  CircularList<Point> hull = new CircularList<>();
         updateHull(hull, point)
         redraw()
         drawPoint(point)
