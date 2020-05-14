@@ -6,7 +6,6 @@ import javafx.scene.control.Button
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
-import java.awt.TextField
 import java.net.URL
 import java.util.*
 import kotlin.math.sqrt
@@ -17,26 +16,23 @@ class AppController : Initializable {
     var canvas: Canvas? = null
 
     @FXML
-    var input: TextField? = null
-
-    @FXML
     var nextButton: Button? = null
     private var context: GraphicsContext? = null
     private val diameter = 6.0
-    private var kApprox = 5
     private var firstRectanglePoint: Point? = null
     private val points: ArrayList<Point> = ArrayList<Point>()
     private var rectangle: Rectangle? = null
     private var rectangleInput = false
     private var rectangleInputEnded = false
-    var debug = false
+    private var debug = false
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         context = canvas?.graphicsContext2D
         context!!.font = Font(null, 10.0)
         onReset()
     }
 
-    private fun hullEdge(points: ArrayList<Point>, l: Int, r: Int): Edge? {
+    private fun hullEdge(points: ArrayList<Point>, r: Int): Edge? {
+        val l = 0
         if (l >= r) {
             return null
         }
@@ -74,7 +70,7 @@ class AppController : Initializable {
     }
 
     private fun deloneTriangulation(points: ArrayList<Point>): ArrayList<Edge?> {
-        var startEdge = hullEdge(points, 0, points.size)
+        var startEdge = hullEdge(points, points.size)
         if (startEdge != null) {
             if (startEdge.start.y < startEdge.end.y) startEdge = Edge(startEdge.end, startEdge.start)
         }

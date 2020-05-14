@@ -2,7 +2,7 @@ import javafx.scene.canvas.GraphicsContext
 import kotlin.math.abs
 
 
-class Rectangle(var p1: Point, var p2: Point) {
+class Rectangle(private var p1: Point, private var p2: Point) {
 
     fun draw(context: GraphicsContext) {
         val x1 = p1.x.coerceAtMost(p2.x)

@@ -1,4 +1,3 @@
-
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
@@ -15,13 +14,6 @@ class NormalLine() {
 
     private fun getY(x: Double): Double {
         return if (Point.equal(b, 0.0)) 0.0 else -(a * x + c) / b
-    }
-
-    fun drawLine(context: GraphicsContext) {
-        val paint: Paint = context.stroke
-        context.stroke = Color.RED
-        context.strokeLine(0.0, getY(0.0), 1000.0, getY(1000.0))
-        context.stroke = paint
     }
 
     fun intersect(line: NormalLine): Point {
