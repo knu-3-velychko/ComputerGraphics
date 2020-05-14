@@ -26,30 +26,21 @@ class AppController : Initializable {
     @FXML
     var loadAction: MenuItem? = null
 
-
-    @FXML
-    var input: TextField? = null
-
     @FXML
     var nextButton: Button? = null
     private var context: GraphicsContext? = null
     private val diameter = 6.0
-    private var kApprox = 5
-    private val firstRectanglePoint: Point? = null
-    private val points: ArrayList<Point> = ArrayList<Point>()
+    private val points: ArrayList<Point> = ArrayList()
     private var rectangleInput = false
-    private val rectangleInputEnded = false
-    var debug = false
-    var firstPointChosen = -1
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         context = canvas!!.graphicsContext2D
         context?.font = Font(null, 10.0)
-        onReset(null)
+        onReset()
     }
 
     @FXML
-    fun onReset(e: ActionEvent?) {
+    fun onReset() {
         println("Action")
         context!!.fill = Color.BLACK
         rectangleInput = false
@@ -57,14 +48,14 @@ class AppController : Initializable {
     }
 
     @FXML
-    fun onOpenFile(e: ActionEvent?) {
+    fun onOpenFile() {
         println("Load")
         points.clear()
         try {
             val reader = BufferedReader(FileReader("int.txt"))
             var s: String?
             while (reader.readLine().also { s = it } != null) {
-                val scan = Scanner(s).useLocale(Locale.US)
+                val scan = Scanner(s!!).useLocale(Locale.US)
                 val x = scan.nextDouble()
                 val y = scan.nextDouble()
                 points.add(Point(x, y))
@@ -79,15 +70,15 @@ class AppController : Initializable {
     }
 
     @FXML
-    fun onSaveAction(e: ActionEvent?) {
+    fun onSaveAction() {
         println("Save")
         try {
             val writer = FileWriter("int.txt")
             val fileWriter = BufferedWriter(writer)
             for (point in points) {
-                fileWriter.write(java.lang.Double.toString(point.x))
+                fileWriter.write(point.x.toString())
                 fileWriter.write(" ")
-                fileWriter.write(java.lang.Double.toString(point.y))
+                fileWriter.write(point.y.toString())
                 fileWriter.newLine()
             }
             fileWriter.close()
@@ -115,24 +106,15 @@ class AppController : Initializable {
     }
 
     @FXML
-    fun onTextEnter(event: KeyEvent) {
-        if (event.code == KeyCode.ENTER) {
-            val text = input!!.text
-            kApprox = text.toInt()
-            nextButtonClick(null)
-        }
-    }
-
-    @FXML
-    fun nextButtonClick(event: MouseEvent?) {
+    fun nextButtonClick() {
         println("Next button click")
         redraw()
         val voronoi = Voronoi(points)
         for (e in voronoi.getEdgeList()) {
             if (e!!.p1 != null && e.p2 != null) {
                 val topY =
-                    (if (e.p1!!.y == Double.POSITIVE_INFINITY) -600 else e.p1!!.y)
-                context!!.strokeLine(e.p1!!.x, topY as Double, e.p2!!.x, e.p2!!.y)
+                    (if (e.p1!!.y == Double.POSITIVE_INFINITY) -600.0 else e.p1!!.y)
+                context!!.strokeLine(e.p1!!.x, topY, e.p2!!.x, e.p2!!.y)
             }
         }
         context!!.stroke = Color.BLACK
@@ -142,10 +124,6 @@ class AppController : Initializable {
         val x: Double = point.x
         val y: Double = point.y
         context!!.fillOval(x - diameter / 2, y - diameter / 2, diameter, diameter)
-    }
-
-    private fun drawPoint(point: Point, numb: Int) {
-        drawPoint(point)
     }
 
 }

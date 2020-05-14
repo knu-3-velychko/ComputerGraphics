@@ -1,7 +1,7 @@
 import java.util.*
 
 
-class Voronoi @JvmOverloads constructor(private val sites: ArrayList<Point>, animate: Boolean = false) {
+class Voronoi constructor(sites: ArrayList<Point>) {
     var sweepLoc: Double
     private val edgeList: ArrayList<VoronoiEdge?> = ArrayList<VoronoiEdge?>(sites.size)
     fun getEdgeList(): ArrayList<VoronoiEdge?> {
@@ -47,10 +47,10 @@ class Voronoi @JvmOverloads constructor(private val sites: ArrayList<Point>, ani
         val breakR = arcAbove.rightBreakPoint
         val newEdge = VoronoiEdge(arcAbove.site, cur.p!!)
         edgeList.add(newEdge)
-        val newBreakL: BreakPoint =
+        val newBreakL =
             BreakPoint(arcAbove.site, cur.p, newEdge, true, this)
 
-        val newBreakR: BreakPoint =
+        val newBreakR=
             BreakPoint(cur.p, arcAbove.site, newEdge, false, this)
 
         breakPoints.add(newBreakL)
@@ -74,8 +74,8 @@ class Voronoi @JvmOverloads constructor(private val sites: ArrayList<Point>, ani
         breakPoints.remove(ce.arc.rightBreakPoint)
         var entryRight = arcs.higherEntry(ce.arc)
         var entryLeft = arcs.lowerEntry(ce.arc)
-        var arcRight: Arc = Arc(Point(0.0, 0.0), this)
-        var arcLeft: Arc = Arc(Point(0.0, 0.0), this)
+        var arcRight = Arc(Point(0.0, 0.0), this)
+        var arcLeft = Arc(Point(0.0, 0.0), this)
         val ceArcLeft = ce.arc.left
         val cocircularJunction = ce.arc.right == ceArcLeft
         if (entryRight != null) {
@@ -101,7 +101,7 @@ class Voronoi @JvmOverloads constructor(private val sites: ArrayList<Point>, ani
         }
         if (entryLeft != null) {
             arcLeft = entryLeft.key as Arc
-            while (cocircularJunction && arcLeft!!.left?.equals(ceArcLeft)!!) {
+            while (cocircularJunction && arcLeft.left?.equals(ceArcLeft)!!) {
                 arcs.remove(arcLeft)
                 arcLeft.leftBreakPoint!!.finish(ce.vert)
                 arcLeft.rightBreakPoint!!.finish(ce.vert)
@@ -156,15 +156,11 @@ class Voronoi @JvmOverloads constructor(private val sites: ArrayList<Point>, ani
     }
 
     companion object {
-        const val MIN_DRAW_DIM = -5.0
-        const val MAX_DRAW_DIM = 5.0
-
         private const val MAX_DIM = 600.0
         private const val MIN_DIM = -600.0
     }
 
     init {
-        // initialize data structures;
         for (site in sites) {
             if (site.x > MAX_DIM || site.x < MIN_DIM || site.y > MAX_DIM || site.y < MIN_DIM) throw RuntimeException(
                 String.format(

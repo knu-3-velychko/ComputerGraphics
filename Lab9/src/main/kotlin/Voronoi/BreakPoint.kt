@@ -1,3 +1,5 @@
+import kotlin.math.sqrt
+
 class BreakPoint(
     left: Point,
     right: Point,
@@ -62,7 +64,7 @@ class BreakPoint(
                 x = if (det <= 0) {
                     -B / (2 * A)
                 } else {
-                    (-B + sign * Math.sqrt(det)) / (2 * A)
+                    (-B + sign * sqrt(det)) / (2 * A)
                 }
                 y = m * x + b
             }
